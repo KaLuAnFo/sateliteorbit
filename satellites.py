@@ -5,10 +5,11 @@ G = 6.67430e-11
 
 
 class Satellites:
-    def __init__(self, position, velocity, radius, colour, primary):
+    def __init__(self, position, velocity, radius, colour, primary,name):
         self.position = Vec3(position)
         self.velocity = Vec3(velocity)
         self.acceleration = Vec3(0, 0, 0)
+        self.name = name
 
         self.radius = radius
         self.colour = colour

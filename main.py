@@ -1,21 +1,19 @@
-
 from ursina import *
+from time import perf_counter
 from attractors import Attractors
-from satellites import Satellites
+from tlefetcher import create_Satellites
+from datetime import datetime, timezone, timedelta
 
 app = Ursina()
 
 G = 6.67430e-11
-
+DISPLAY_SCALE_METERS = 1_000_000
 EARTH_MASS = 5.972e24
 EARTH_RADIUS = 6.371e6
 
-SATELLITE_ALTITUDE = 400_000
-SATELLITE_ORBIT_RADIUS = EARTH_RADIUS + SATELLITE_ALTITUDE
-
-SATELLITE_ORBIT_VELOCITY = math.sqrt(
-    G * EARTH_MASS / SATELLITE_ORBIT_RADIUS
-)
+last_frame_time = perf_counter()
+simulation_time = datetime.now(timezone.utc)
+TIME_SCALE =1000
 
 earth = Attractors(
     mass=EARTH_MASS,
@@ -23,26 +21,26 @@ earth = Attractors(
     radius=EARTH_RADIUS,
     colour=color.blue
 )
-
-satellite = Satellites(
-    position=(SATELLITE_ORBIT_RADIUS, 0, 0),
-    velocity=(0, 0, SATELLITE_ORBIT_VELOCITY),
-    radius=200_000,
-    colour=color.red,
-    primary=earth
-)
-
+iss =create_Satellites(25544)
 attractors = [earth]
-satellite_list = [satellite]
+satellite_list = []
+if iss is not None:
+    satellite_list.append(iss)
 
-TIME_SCALE = 10
+print (earth.radius/DISPLAY_SCALE_METERS)
 
 
 def update():
-    dt = 1 * TIME_SCALE
+    global simulation_time, last_frame_time
+
+    current_time = perf_counter()
+    dt = current_time - last_frame_time
+    last_frame_time = current_time
+    simulation_time+=timedelta(seconds=dt*TIME_SCALE)
 
     for satellite in satellite_list:
-        satellite.update(dt, attractors)
+        if satellite is not None:
+            satellite.update(simulation_time)
 
     earth.sync_entity()
 

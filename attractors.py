@@ -18,4 +18,4 @@ class Attractors:
         )
 
     def sync_entity(self):
-        self.entity.position = self.position / DISPLAY_SCALE
+        self.entity.position = self.position
