@@ -1,3 +1,4 @@
+import math
 from ursina import *
 from skyfield.api import EarthSatellite, load
 
@@ -29,8 +30,13 @@ class TrackedSatellites:
 
         x , y , z = geocentric.position.km
 
+        if not all(math.isfinite(value) for value in [x,y,z]):
+            self.entity.enabled = False
+            return
+
+        self.entity.enabled = True
         self.entity.position = Vec3(
-            x/DISPLAY_SCALE_KM ,
-            y/DISPLAY_SCALE_KM ,
-            z/DISPLAY_SCALE_KM
+            x/DISPLAY_SCALE_KM/2 ,
+            y/DISPLAY_SCALE_KM/2,
+            z/DISPLAY_SCALE_KM/2
         )

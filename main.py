@@ -21,9 +21,14 @@ earth = Attractors(
     radius=EARTH_RADIUS,
     colour=color.blue
 )
-iss =create_Satellites(25544)
-attractors = [earth]
 satellite_list = []
+iss =create_Satellites(25544)
+for x in range(60000,60100):
+    s = create_Satellites(x)
+    if s is not None:
+        satellite_list.append(s)
+attractors = [earth]
+
 if iss is not None:
     satellite_list.append(iss)
 
@@ -41,6 +46,8 @@ def update():
     for satellite in satellite_list:
         if satellite is not None:
             satellite.update(simulation_time)
+
+
 
     earth.sync_entity()
 
