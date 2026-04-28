@@ -13,7 +13,7 @@ EARTH_RADIUS = 6.371e6
 CACHE_FILE = Path("data/tle_cache_old_api.json")
 last_frame_time = perf_counter()
 simulation_time = datetime.now(timezone.utc)
-TIME_SCALE =10
+TIME_SCALE =100
 
 earth = Attractors(
     mass=EARTH_MASS,
