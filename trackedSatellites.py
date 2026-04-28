@@ -1,4 +1,3 @@
-import math
 from ursina import *
 from skyfield.api import EarthSatellite, load
 

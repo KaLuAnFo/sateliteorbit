@@ -7,16 +7,13 @@ from datetime import datetime, timezone, timedelta
 
 app = Ursina()
 
-
-G = 6.67430e-11
 DISPLAY_SCALE_METERS = 1_000_000
 EARTH_MASS = 5.972e24
 EARTH_RADIUS = 6.371e6
-
+CACHE_FILE = Path("data/tle_cache_old_api.json")
 last_frame_time = perf_counter()
 simulation_time = datetime.now(timezone.utc)
 TIME_SCALE =10
-SAVED_AT = ""
 
 earth = Attractors(
     mass=EARTH_MASS,
@@ -27,7 +24,6 @@ earth = Attractors(
 satellite_list = []
 attractors = [earth]
 
-CACHE_FILE = Path("data/tle_cache_old_api.json")
 
 def load_cached_satellites():
     with open(CACHE_FILE, "r",encoding="utf-8") as file:
