@@ -1,10 +1,12 @@
 from ursina import *
+import json
 from time import perf_counter
+from trackedSatellites import TrackedSatellites
 from attractors import Attractors
-from tlefetcher import create_Satellites
 from datetime import datetime, timezone, timedelta
 
 app = Ursina()
+
 
 G = 6.67430e-11
 DISPLAY_SCALE_METERS = 1_000_000
@@ -13,7 +15,8 @@ EARTH_RADIUS = 6.371e6
 
 last_frame_time = perf_counter()
 simulation_time = datetime.now(timezone.utc)
-TIME_SCALE =1000
+TIME_SCALE =10
+SAVED_AT = ""
 
 earth = Attractors(
     mass=EARTH_MASS,
@@ -22,17 +25,27 @@ earth = Attractors(
     colour=color.blue
 )
 satellite_list = []
-iss =create_Satellites(25544)
-for x in range(60000,60100):
-    s = create_Satellites(x)
-    if s is not None:
-        satellite_list.append(s)
 attractors = [earth]
 
-if iss is not None:
-    satellite_list.append(iss)
+CACHE_FILE = Path("data/tle_cache_old_api.json")
 
-print (earth.radius/DISPLAY_SCALE_METERS)
+def load_cached_satellites():
+    with open(CACHE_FILE, "r",encoding="utf-8") as file:
+        data=json.load(file)
+
+    return data["satellites"]
+
+
+
+for data in load_cached_satellites():
+    satellite = TrackedSatellites (
+        name = data["name"],
+        tle_line_1=data["line1"],
+        tle_line_2=data["line2"],
+        colour=color.red,
+        radius =0.05
+    )
+    satellite_list.append(satellite)
 
 
 def update():
