@@ -16,8 +16,8 @@ last_frame_time = perf_counter()
 simulation_time = datetime.now(timezone.utc)
 TIME_SCALE =1
 is_Tracking = False
-
-
+#camera.rotation = Vec3(0,0,180)
+#EditorCamera.rotation = Vec3(0,0,180)
 
 sky = Entity(
     model='sphere',
