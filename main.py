@@ -14,13 +14,23 @@ CACHE_FILE = Path("data/tle_cache_old_api.json")
 last_frame_time = perf_counter()
 simulation_time = datetime.now(timezone.utc)
 TIME_SCALE =100
+#sky_texture = load_texture("data/8k_stars_milky_way.jpg")
+#Sky(texture =sky_texture)
+sky = Entity(
+    model='sphere',
+    texture='data/8k_stars_milky_way.jpg',
+    scale=200,
+    double_sided=True
+)
+
 
 earth = Attractors(
     mass=EARTH_MASS,
     position=(0, 0, 0),
-    radius=EARTH_RADIUS,
-    texture="data/2k_earth_daymap.jpg"
+    radius=EARTH_RADIUS
 )
+
+
 satellite_list = []
 attractors = [earth]
 button_dict = {}
@@ -43,7 +53,7 @@ def button_clicked(name):
             selected_object.tle_line_1 + '\n' +
             selected_object.tle_line_2
     )
-    #selected_object.entity.scale*=2
+    selected_object.entity.scale*=2
     te.enabled= True
 
     print('geklickt:', name)
@@ -67,7 +77,7 @@ for data in load_cached_satellites():
         tle_line_1=data["line1"],
         tle_line_2=data["line2"],
         colour=color.red,
-        radius =0.05
+        radius =0.01
 
     )
 
