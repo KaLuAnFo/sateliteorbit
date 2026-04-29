@@ -1,3 +1,4 @@
+
 from ursina import *
 import json
 from time import perf_counter
@@ -13,9 +14,11 @@ EARTH_RADIUS = 6.371e6
 CACHE_FILE = Path("data/tle_cache_old_api.json")
 last_frame_time = perf_counter()
 simulation_time = datetime.now(timezone.utc)
-TIME_SCALE =100
-#sky_texture = load_texture("data/8k_stars_milky_way.jpg")
-#Sky(texture =sky_texture)
+TIME_SCALE =1
+is_Tracking = False
+
+
+
 sky = Entity(
     model='sphere',
     texture='data/8k_stars_milky_way.jpg',
@@ -53,14 +56,31 @@ def button_clicked(name):
             selected_object.tle_line_1 + '\n' +
             selected_object.tle_line_2
     )
-    selected_object.entity.scale*=2
-    te.enabled= True
+    satellite_glow(selected_object)
 
+    global tracked_obj
+    tracked_obj = selected_object
+    global is_Tracking
+    is_Tracking= True
+    te.enabled= True
     print('geklickt:', name)
     print(selected_object.tle_line_1)
+def follow_satellite():
+    sat = tracked_obj
+    if sat is not None:
+        camera.position = sat.entity.position * 2
+        camera.look_at(sat.entity.position)
 
-
-
+def satellite_glow(satellitetoglow):
+    glow = Entity(
+        parent=satellitetoglow.entity,
+        model="sphere",
+        scale=2,
+        color=color.rgba(0,255,0,50),
+        double_sided=True
+    )
+    print("Glow enabled:", satellite.name)
+    glow.enable()
 
 
 def load_cached_satellites():
@@ -77,14 +97,13 @@ for data in load_cached_satellites():
         tle_line_1=data["line1"],
         tle_line_2=data["line2"],
         colour=color.red,
-        radius =0.01
+        radius =0.02
 
     )
 
     satellite_list.append(satellite)
     button_dict[satellite.name] = Func(button_clicked, satellite)
 
-#UI
 
 b1 = ButtonList(button_dict,button_height=1,width=0.3, popup=0,clear_selected_on_enable=True)
 b1.position = window.top_left
@@ -92,6 +111,7 @@ b1.enabled = False
 def input(key):
     if key == 'space':
         b1.enabled = not b1.enabled
+
 
 b1.on_click= button_clicked
 
@@ -112,12 +132,13 @@ def update():
     for satellite in satellite_list:
         if satellite is not None:
             satellite.update(simulation_time)
-
+    if(is_Tracking):
+        follow_satellite()
 
 
     earth.sync_entity()
 
 
-EditorCamera()
+#EditorCamera()
 
 app.run()
