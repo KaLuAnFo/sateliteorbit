@@ -16,8 +16,7 @@ last_frame_time = perf_counter()
 simulation_time = datetime.now(timezone.utc)
 TIME_SCALE =1
 is_Tracking = False
-#camera.rotation = Vec3(0,0,180)
-#EditorCamera.rotation = Vec3(0,0,180)
+
 
 sky = Entity(
     model='sphere',
@@ -98,9 +97,7 @@ for data in load_cached_satellites():
         tle_line_2=data["line2"],
         colour=color.red,
         radius =0.02
-
     )
-
     satellite_list.append(satellite)
     button_dict[satellite.name] = Func(button_clicked, satellite)
 
@@ -108,6 +105,7 @@ for data in load_cached_satellites():
 b1 = ButtonList(button_dict,button_height=1,width=0.3, popup=0,clear_selected_on_enable=True)
 b1.position = window.top_left
 b1.enabled = False
+
 def input(key):
     if key == 'space':
         b1.enabled = not b1.enabled
@@ -115,30 +113,17 @@ def input(key):
 
 b1.on_click= button_clicked
 
-
-def search_and_highlight(name):
-    pass
-
-
-
 def update():
     global simulation_time, last_frame_time
-
     current_time = perf_counter()
     dt = current_time - last_frame_time
     last_frame_time = current_time
     simulation_time+=timedelta(seconds=dt*TIME_SCALE)
-
     for satellite in satellite_list:
         if satellite is not None:
             satellite.update(simulation_time)
     if(is_Tracking):
         follow_satellite()
-
-
     earth.sync_entity()
-
-
-#EditorCamera()
 
 app.run()
